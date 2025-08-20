@@ -6,12 +6,14 @@
     "electron": "^37.3.1"
   },
   "scripts": {
-    "start": "nodemon --watch main.js --exec npm run build",
-    "build": "electron .",
+    "start": "electron .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "nodemon": "^3.1.10"
+  }
 }

@@ -1,34 +1,39 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 
+let mainWindow;
+let childWindow;
+
 function createWindow() {
-  const mainWindow = new BrowserWindow({
-    // x y 相对于屏幕左上角的坐标
-    x: 100,
-    y: 100,
-    // 宽高
+  mainWindow = new BrowserWindow({
     width: 800,
     height: 600,
-    // show 窗体是否显示
     show: false,
-    // 最大、最小宽高
-    maxHeight: 1200,
-    maxWidth: 1600,
-    minHeight: 200,
-    minWidth: 100,
-    // 尺寸是否可变
-    resizable: false,
+
+    // 窗口边框
+    frame: true,
+    // icon标志
+    icon: 'logo.ico',
+    // 自动隐藏菜单栏
+    autoHideMenuBar: true,
+    // 标题, index.html 中 title 必须删去
+    title: 'myWindow',
 
     webPreferences: {
-      // contextIsolation: true, // 默认启用，安全性重要
-      // nodeIntegration: false, // 默认禁用，安全性重要
-      preload: path.join(__dirname, 'preload.js') // 安全地暴露API给渲染进程
+      // 默认开启，预加载脚本和 Electron API 会被隔离在独立的上下文中, 会隔离渲染进程的全局环境
+      contextIsolation: false, 
+      // 默认关闭nodejs集成，开启后渲染进程可直接访问所有 nodejs api
+      nodeIntegration: true,
+      // 开启remote模块(12之后已移除)，允许渲染进程直接使用主进程
+      // enableRemoteModule: true,
+
+      // preload: path.join(__dirname, 'preload.js') // 安全地暴露API给渲染进程
     }
   });
 
   mainWindow.loadFile('index.html');
   // 开发时打开开发者工具
-  // mainWindow.webContents.openDevTools();
+  mainWindow.webContents.openDevTools();
 
   // 当窗体准备完毕可显示时再显示，以防窗体显示和内容加载的显示效果不同步（视觉闪烁）
   mainWindow.on('ready-to-show', ()=>{
@@ -40,12 +45,37 @@ function createWindow() {
   });
 }
 
+function createChildWindow() {
+  // 创建子窗口
+  childWindow = new BrowserWindow({
+    width: 400,
+    height: 300,
+    parent: mainWindow, // 设置父窗口
+    modal: true, // 设置为模态窗口
+  });
+
+  // 加载子窗口页面
+  childWindow.loadFile('child.html');
+
+  // 当子窗口关闭时
+  childWindow.on('closed', () => {
+    childWindow = null;
+  });
+}
+
 app.whenReady().then(() => {
   createWindow();
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
+});
+
+// 监听创建子窗口的IPC消息
+ipcMain.on('open-child-window', () => {
+  if (!childWindow) {
+    createChildWindow();
+  }
 });
 
 //监听后 需要手动触发 quit 事件
