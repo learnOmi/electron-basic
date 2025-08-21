@@ -2,7 +2,8 @@ const { app, BrowserWindow, ipcMain } = require('electron');
 const path = require('path');
 
 let mainWindow;
-let childWindow;
+let confirmQuitWindow;
+let isQuitting = false;
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -43,29 +44,45 @@ function createWindow() {
   // 当窗口关闭时
   mainWindow.on('closed', () => {
     mainWindow = null;
-    // 同时关闭所有子窗口
-    if (childWindow) {
-      childWindow.close();
-      childWindow = null;
-    }
   });
 }
 
-function createChildWindow() {
-  // 创建子窗口
-  childWindow = new BrowserWindow({
-    width: 400,
-    height: 300,
+function createConfirmQuitWindow() {
+  // 如果正在退出或确认窗口已存在，则不再创建新窗口
+  if (isQuitting || confirmQuitWindow) {
+    if (confirmQuitWindow) {
+      confirmQuitWindow.focus();
+    }
+    return;
+  }
+
+  // 创建确认退出窗口
+  confirmQuitWindow = new BrowserWindow({
+    width: 350,
+    height: 200,
     parent: mainWindow, // 设置父窗口
     modal: true, // 设置为模态窗口
+    resizable: false,
+    movable: false,
+    minimizable: false,
+    maximizable: false,
+    skipTaskbar: true,
+    alwaysOnTop: true,
+    webPreferences: {
+      nodeIntegration: true,
+      contextIsolation: false
+    }
   });
 
-  // 加载子窗口页面
-  childWindow.loadFile('child.html');
+  // 加载确认退出窗口页面
+  confirmQuitWindow.loadFile('child.html');
 
-  // 当子窗口关闭时
-  childWindow.on('closed', () => {
-    childWindow = null;
+  // 移除菜单栏
+  confirmQuitWindow.setMenu(null);
+
+  // 当确认窗口关闭时
+  confirmQuitWindow.on('closed', () => {
+    confirmQuitWindow = null;
   });
 }
 
@@ -75,13 +92,6 @@ app.whenReady().then(() => {
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();
   });
-});
-
-// 监听创建子窗口的IPC消息
-ipcMain.on('open-child-window', () => {
-  if (!childWindow) {
-    createChildWindow();
-  }
 });
 
 // 监听窗口控制消息
@@ -105,7 +115,58 @@ ipcMain.on('window-control', (event, action) => {
   }
 });
 
+// 监听退出确认消息
+ipcMain.on('confirm-quit', () => {
+  isQuitting = true; // 设置退出状态
+    
+  // 关闭所有窗口并退出应用
+  if (confirmQuitWindow) {
+    confirmQuitWindow.close();
+  }
+  
+  // 使用更可靠的方式退出应用
+  quitApplication();
+});
+
+// 监听取消退出消息
+ipcMain.on('cancel-quit', () => {
+  // 只关闭确认窗口，不退出应用
+  if (confirmQuitWindow) {
+    confirmQuitWindow.close();
+  }
+});
+
+// 监听 beforeunload 确认消息
+ipcMain.on('show-quit-confirmation', () => {
+  // 只有在未退出状态下才显示确认窗口
+  if (!isQuitting) {
+    createConfirmQuitWindow();
+  }
+});
+
 //监听后 需要手动触发 quit 事件
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();
 });
+
+// 更可靠的退出函数
+function quitApplication() {
+  // 获取所有窗口并关闭它们
+  const windows = BrowserWindow.getAllWindows();
+  
+  // 先关闭所有窗口
+  windows.forEach(win => {
+    if (!win.isDestroyed()) {
+      win.close();
+    }
+  });
+  
+  // 使用 process.exit 作为后备方案
+  setTimeout(() => {
+    app.quit();
+    // 如果 app.quit() 没有生效，使用 process.exit
+    setTimeout(() => {
+      process.exit(0);
+    }, 1000);
+  }, 100);
+}

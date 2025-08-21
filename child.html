@@ -2,16 +2,19 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>子窗口</title>
+    <title>确认退出</title>
     <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <div class="child-content">
-        <h2>这是子窗口</h2>
-        <p>我是从父窗口打开的模态窗口</p>
-        <p>关闭此窗口后可以再次从父窗口打开</p>
+    <div class="confirm-dialog">
+        <h2>确认退出</h2>
+        <p>您确定要退出应用程序吗？</p>
         
-        <button onclick="window.close()">关闭窗口</button>
+        <div class="confirm-buttons">
+            <button class="confirm-btn yes" id="confirm-yes">是</button>
+            <button class="confirm-btn no" id="confirm-no">否</button>
+        </div>
     </div>
+    <script src="child.js"></script>
 </body>
 </html>

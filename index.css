@@ -79,25 +79,57 @@ body {
   background-color: rgba(255, 255, 255, 0.3);
 }
 
-/* 子窗口样式 */
-.child-content {
+/* 确认退出窗口样式 */
+.confirm-dialog {
   padding: 20px;
   text-align: center;
-  background-color: #f5f5f5;
-  color: #333;
-  height: 100%;
-}
-
-.child-content h2 {
-  color: #2c3e50;
-}
-
-.child-content button {
-  background-color: #3498db;
+  background-color: #2c3e50;
   color: white;
-  border: none;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.confirm-dialog h2 {
+  margin-top: 0;
+  color: #ecf0f1;
+}
+
+.confirm-dialog p {
+  margin-bottom: 30px;
+}
+
+.confirm-buttons {
+  display: flex;
+  gap: 15px;
+}
+
+.confirm-btn {
   padding: 10px 20px;
-  margin-top: 20px;
-  cursor: pointer;
+  border: none;
   border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s;
+  min-width: 80px;
+}
+
+.confirm-btn.yes {
+  background-color: #e74c3c;
+  color: white;
+}
+
+.confirm-btn.yes:hover {
+  background-color: #c0392b;
+}
+
+.confirm-btn.no {
+  background-color: #7f8c8d;
+  color: white;
+}
+
+.confirm-btn.no:hover {
+  background-color: #95a5a6;
 }
