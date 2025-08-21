@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu } = require('electron');
 const path = require('path');
 
 let mainWindow;
@@ -12,11 +12,11 @@ function createWindow() {
     show: false,
 
     // 窗口边框
-    frame: false,
+    frame: true,
     // icon标志
     icon: 'logo.ico',
     // 自动隐藏菜单栏
-    autoHideMenuBar: true,
+    autoHideMenuBar: false,
     // 标题, index.html 中 title 必须删去
     title: 'myWindow',
 
@@ -86,8 +86,58 @@ function createConfirmQuitWindow() {
   });
 }
 
+// 创建应用菜单
+function createMenu() {
+  const isMac = process.platform === 'darwin';
+
+  const template = [
+    // macOS 有特殊的应用菜单
+    ...(isMac ? [{
+      label: app.getName(),
+      submenu: [
+        { role: 'about', label: `关于 ${app.getName()}` },
+        { type: 'separator' },
+        { role: 'services', label: '服务' },
+      ]
+    }] : []),
+    {
+      label: '文件',
+      submenu: [
+        {
+          label: '新建',
+          accelerator: 'CmdOrCtrl+N',
+          click: () => {
+            console.log('新建……');
+          }
+        },
+        { type: 'separator' },
+        {
+          label: '打开',
+          accelerator: 'CmdOrCtrl+O',
+          click: () => {
+            console.log('打开……');
+          }
+        },
+      ]
+    },
+    {
+      label: '编辑',
+      submenu: [
+        { role: 'undo', label: '撤销' },
+        { role: 'redo', label: '重做' },
+        { type: 'separator' },
+        { role: 'cut', label: '剪切' }
+      ]
+    },
+  ];
+
+  const menu = Menu.buildFromTemplate(template);
+  Menu.setApplicationMenu(menu);
+}
+
 app.whenReady().then(() => {
   createWindow();
+  createMenu();
 
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow();

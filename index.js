@@ -24,4 +24,38 @@ window.addEventListener('DOMContentLoaded', () => {
         ipcRenderer.send('window-control', 'close');
     });
 
+        // 菜单选项卡点击事件
+    const menuTabs = document.querySelectorAll('.menu-tab');
+    menuTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // 移除所有选项卡的active类
+            menuTabs.forEach(t => t.classList.remove('active'));
+            
+            // 为当前选项卡添加active类
+            tab.classList.add('active');
+            
+            // 获取选项卡标识
+            const tabName = tab.getAttribute('data-tab');
+            
+            // 在控制台输出日志
+            console.log(`点击了 ${tabName} 选项卡`);
+            
+            // 根据选项卡执行不同操作
+            switch(tabName) {
+                case 'home':
+                    console.log('首页选项卡被点击');
+                    break;
+                case 'settings':
+                    console.log('设置选项卡被点击');
+                    break;
+                case 'help':
+                    console.log('帮助选项卡被点击');
+                    break;
+                case 'about':
+                    console.log('关于选项卡被点击');
+                    break;
+            }
+        });
+    });
+
 });

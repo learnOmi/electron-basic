@@ -49,10 +49,57 @@ body {
   background-color: #e74c3c;
 }
 
+/* 菜单选项卡样式 */
+.menu-tabs {
+  display: flex;
+  background-color: rgba(0, 0, 0, 0.15);
+  height: 40px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.menu-tab {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  -webkit-app-region: no-drag;
+}
+
+.menu-tab:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.menu-tab.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-bottom: 2px solid #3498db;
+}
+
+.menu-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background-color: #3498db;
+}
+
+.tab-icon {
+  margin-right: 8px;
+  font-size: 14px;
+}
+
+.tab-text {
+  font-size: 14px;
+  font-weight: 500;
+}
+
 /* 内容区域 */
 .content {
   padding: 20px;
-  height: calc(100vh - 30px);
+  height: calc(100vh - 70px); /* 标题栏30px + 菜单选项卡40px */
   display: flex;
   flex-direction: column;
   align-items: center;
