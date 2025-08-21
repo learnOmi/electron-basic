@@ -1,0 +1,103 @@
+/* 全局样式 */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(to bottom, #3498db, #2c3e50);
+  color: white;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* 自定义标题栏 */
+.titlebar {
+  height: 30px;
+  background-color: rgba(0, 0, 0, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  -webkit-app-region: drag; /* 允许拖动 */
+  user-select: none;
+}
+
+.titlebar-title {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.titlebar-controls {
+  display: flex;
+  -webkit-app-region: no-drag; /* 按钮区域不允许拖动 */
+}
+
+.titlebar-button {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.titlebar-button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.titlebar-button.close:hover {
+  background-color: #e74c3c;
+}
+
+/* 内容区域 */
+.content {
+  padding: 20px;
+  height: calc(100vh - 30px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 按钮样式 */
+.btn {
+  background-color: rgba(255, 255, 255, 0.2);
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 10px;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background-color 0.3s;
+}
+
+.btn:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+/* 子窗口样式 */
+.child-content {
+  padding: 20px;
+  text-align: center;
+  background-color: #f5f5f5;
+  color: #333;
+  height: 100%;
+}
+
+.child-content h2 {
+  color: #2c3e50;
+}
+
+.child-content button {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin-top: 20px;
+  cursor: pointer;
+  border-radius: 4px;
+}

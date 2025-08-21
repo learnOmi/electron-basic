@@ -2,11 +2,29 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title></title>
+    <title>父窗口</title>
+    <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <h1>Hello Electron!</h1>
-    <Button id="btn1">create new window</Button>
-    <script src='index.js'></script>
+    <!-- 自定义标题栏 -->
+    <div class="titlebar">
+        <div class="titlebar-title">无边框 Electron 应用</div>
+        <div class="titlebar-controls">
+            <div class="titlebar-button" id="minimize-btn">−</div>
+            <div class="titlebar-button" id="maximize-btn">◻</div>
+            <div class="titlebar-button close" id="close-btn">×</div>
+        </div>
+    </div>
+    
+    <!-- 内容区域 -->
+    <div class="content">
+        <h1>父窗口</h1>
+        <p>这是一个无边框 Electron 窗口示例</p>
+        
+        <button class="btn" id="openChildBtn">打开子窗口</button>
+    </div>
+    
+    <script src="index.js">
+    </script>
 </body>
 </html>

@@ -11,7 +11,7 @@ function createWindow() {
     show: false,
 
     // 窗口边框
-    frame: true,
+    frame: false,
     // icon标志
     icon: 'logo.ico',
     // 自动隐藏菜单栏
@@ -40,8 +40,14 @@ function createWindow() {
     mainWindow.show();
   });
 
-  mainWindow.on('close', ()=>{
+  // 当窗口关闭时
+  mainWindow.on('closed', () => {
     mainWindow = null;
+    // 同时关闭所有子窗口
+    if (childWindow) {
+      childWindow.close();
+      childWindow = null;
+    }
   });
 }
 
@@ -75,6 +81,27 @@ app.whenReady().then(() => {
 ipcMain.on('open-child-window', () => {
   if (!childWindow) {
     createChildWindow();
+  }
+});
+
+// 监听窗口控制消息
+ipcMain.on('window-control', (event, action) => {
+  if (mainWindow) {
+    switch (action) {
+      case 'minimize':
+        mainWindow.minimize();
+        break;
+      case 'maximize':
+        if (mainWindow.isMaximized()) {
+          mainWindow.unmaximize();
+        } else {
+          mainWindow.maximize();
+        }
+        break;
+      case 'close':
+        mainWindow.close();
+        break;
+    }
   }
 });
 

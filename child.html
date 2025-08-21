@@ -2,9 +2,16 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <title>New window</title>
+    <title>子窗口</title>
+    <link rel="stylesheet" href="index.css">
 </head>
 <body>
-    <h1>Hello Electron!</h1>
+    <div class="child-content">
+        <h2>这是子窗口</h2>
+        <p>我是从父窗口打开的模态窗口</p>
+        <p>关闭此窗口后可以再次从父窗口打开</p>
+        
+        <button onclick="window.close()">关闭窗口</button>
+    </div>
 </body>
 </html>
