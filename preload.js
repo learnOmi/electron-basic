@@ -8,11 +8,20 @@ contextBridge.exposeInMainWorld('electronAPI', {
   menuAction: (action) => ipcRenderer.send('menu-action', action),
   customMenuAction: (action) => ipcRenderer.send('custom-menu-action', action),
   
+  // 添加菜单项
+  addMenuItem: (name) => ipcRenderer.send('add-menu-item', name),
+  
   // 退出确认
   showQuitConfirmation: () => ipcRenderer.send('show-quit-confirmation'),
   
   // 监听菜单操作
   onMenuAction: (callback) => ipcRenderer.on('menu-action', callback),
+  
+  // 监听菜单项添加结果
+  onMenuItemAdded: (callback) => ipcRenderer.on('menu-item-added', callback),
+  
+  // 监听菜单项添加错误
+  onMenuItemError: (callback) => ipcRenderer.on('menu-item-error', callback),
   
   // 移除监听器
   removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel)

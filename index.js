@@ -51,6 +51,19 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
+
+    // 添加菜单项按钮
+    document.getElementById('addMenuItemBtn').addEventListener('click', () => {
+        const menuItemName = document.getElementById('menuItemName').value.trim();
+        if (menuItemName) {
+            // 发送添加菜单项的请求到主进程
+            window.electronAPI.addMenuItem(menuItemName);
+            document.getElementById('menuItemName').value = ''; // 清空输入框
+        } else {
+            addLogEntry('请输入菜单项名称');
+        }
+    });
+    
     
     // 监听来自主进程的菜单操作
     window.electronAPI.onMenuAction((event, action) => {
@@ -66,4 +79,37 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         }
     });
+
+    // 监听菜单项添加结果
+    window.electronAPI.onMenuItemAdded((event, menuItemName) => {
+        addLogEntry(`已添加菜单项: ${menuItemName}`);
+    });
+    
+    // 监听菜单项添加错误
+    window.electronAPI.onMenuItemError((event, errorMessage) => {
+        addLogEntry(`错误: ${errorMessage}`);
+    });
+    
+    // 添加操作日志功能
+    function addLogEntry(message) {
+        const logContainer = document.getElementById('logContent');
+        const logEntry = document.createElement('div');
+        logEntry.className = 'log-entry';
+        
+        const now = new Date();
+        const timeString = now.toTimeString().split(' ')[0];
+        
+        logEntry.innerHTML = `<span class="log-time">[${timeString}]</span> ${message}`;
+        
+        // 如果日志为空，移除等待消息
+        if (logContainer.firstChild?.textContent === '等待操作...') {
+            logContainer.innerHTML = '';
+        }
+        
+        logContainer.appendChild(logEntry);
+        logContainer.scrollTop = logContainer.scrollHeight;
+    }
+
+    // 初始日志
+    addLogEntry('应用程序已启动');
 });

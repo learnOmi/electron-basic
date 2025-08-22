@@ -1,9 +1,11 @@
-const { app, BrowserWindow, ipcMain, Menu } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, MenuItem } = require('electron');
 const path = require('path');
 
 let mainWindow;
 let confirmQuitWindow;
 let isQuitting = false;
+// 存储自定义菜单项
+let customMenuItems = [];
 
 function createWindow() {
   mainWindow = new BrowserWindow({
@@ -224,11 +226,68 @@ function createMenu() {
           }
         }
       ]
+    },
+    // 添加自定义菜单
+    {
+      label: '自定义',
+      id: 'custom-menu', // 添加ID以便后续查找
+      submenu: [
+        // 初始时为空，将通过动态添加填充
+        {
+          label: '暂无自定义菜单项',
+          enabled: false
+        }
+      ]
     }
   ];
 
   const menu = Menu.buildFromTemplate(template);
   Menu.setApplicationMenu(menu);
+}
+
+// 添加自定义菜单项
+function addCustomMenuItem(menuItemName) {
+  try {
+    // 获取当前应用菜单
+    const appMenu = Menu.getApplicationMenu();
+    
+    // 查找自定义菜单
+    const customMenu = appMenu.getMenuItemById('custom-menu');
+    
+    if (!customMenu) {
+      throw new Error('找不到自定义菜单');
+    }
+    
+    // 如果是第一个自定义菜单项，移除"暂无自定义菜单项"
+    if (customMenu.submenu.items.length === 1 && 
+        customMenu.submenu.items[0].label === '暂无自定义菜单项') {
+      customMenu.submenu.clear();
+    }
+    
+    // 创建新菜单项
+    const newMenuItem = new MenuItem({
+      label: menuItemName,
+      click: () => {
+        console.log(`点击了自定义菜单项: ${menuItemName}`);
+        mainWindow.webContents.send('menu-action', `custom-${menuItemName}`);
+      }
+    });
+    
+    // 添加新菜单项
+    customMenu.submenu.append(newMenuItem);
+    
+    // 存储菜单项信息
+    customMenuItems.push(menuItemName);
+    
+    // 通知渲染进程添加成功
+    mainWindow.webContents.send('menu-item-added', menuItemName);
+    
+    return true;
+  } catch (error) {
+    console.error('添加菜单项失败:', error);
+    mainWindow.webContents.send('menu-item-error', error.message);
+    return false;
+  }
 }
 
 app.whenReady().then(() => {
@@ -286,6 +345,11 @@ ipcMain.on('cancel-quit', () => {
   if (confirmQuitWindow) {
     confirmQuitWindow.close();
   }
+});
+
+// 监听添加菜单项消息
+ipcMain.on('add-menu-item', (event, menuItemName) => {
+  addCustomMenuItem(menuItemName);
 });
 
 // 监听 beforeunload 确认消息
