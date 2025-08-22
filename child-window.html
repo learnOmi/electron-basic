@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>子窗口 - localStorage通信</title>
+    <link rel="stylesheet" href="index.css">
+    <style>
+        .message-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 90%;
+            margin: 20px auto;
+        }
+        .input-group {
+            display: flex;
+            gap: 10px;
+        }
+        .input-group input {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.9);
+            color: #2c3e50;
+        }
+        .messages {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 15px;
+            border-radius: 8px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: 'Consolas', monospace;
+            font-size: 12px;
+        }
+        .message {
+            margin: 5px 0;
+            padding: 5px;
+            border-radius: 4px;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .message.own {
+            background-color: rgba(52, 152, 219, 0.3);
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="titlebar">
+        <div class="titlebar-title">子窗口 - 与父窗口通信</div>
+        <div class="titlebar-controls">
+            <div class="titlebar-button" id="close-btn">×</div>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>通过localStorage与父窗口通信</h2>
+        
+        <div class="message-container">
+            <div class="input-group">
+                <input type="text" id="messageInput" placeholder="输入要发送的消息">
+                <button class="btn" id="sendMessageBtn">发送消息</button>
+            </div>
+            
+            <div class="messages" id="messagesContainer">
+                <div class="message">等待消息...</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="child-window.js"></script>
+</body>
+</html>

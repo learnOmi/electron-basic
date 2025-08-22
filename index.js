@@ -101,6 +101,55 @@ window.addEventListener('DOMContentLoaded', () => {
         console.log(`右键菜单操作: ${action}`);
         addLogEntry(`右键菜单: ${action}`);
     });
+
+    document.getElementById('openChildBtn').addEventListener('click', () => {
+        window.open('child-window.html', 'childWindow', 'width=600,height=400');
+        addLogEntry('打开了子窗口');
+    });
+
+    // 监听localStorage的变化（来自子窗口的消息）
+    window.addEventListener('storage', (e) => {
+        if (e.key === 'childToParentMessage') {
+            const message = JSON.parse(e.newValue);
+            addLogEntry(`收到子窗口消息: ${message.text}`);
+        }
+    });
+
+    // 在UI中添加发送消息的功能
+    const sendMessageSection = document.createElement('div');
+    sendMessageSection.className = 'add-menu-section';
+    sendMessageSection.innerHTML = `
+        <h2>向子窗口发送消息</h2>
+        <div class="input-group">
+            <input type="text" id="messageToChild" placeholder="输入要发送到子窗口的消息">
+            <button class="btn" id="sendToChildBtn">发送</button>
+        </div>
+    `;
+
+    document.querySelector('.content').insertBefore(sendMessageSection, document.querySelector('.action-log'));
+
+    document.getElementById('sendToChildBtn').addEventListener('click', () => {
+        const messageInput = document.getElementById('messageToChild');
+        const message = messageInput.value.trim();
+        
+        if (message) {
+            sendMessageToChild(message);
+            messageInput.value = '';
+        }
+    });
+
+    // 添加发送消息到子窗口的功能
+    function sendMessageToChild(message) {
+        const messageObj = {
+            text: message,
+            timestamp: new Date().toLocaleTimeString(),
+            from: 'parent'
+        };
+        
+        localStorage.setItem('parentToChildMessage', JSON.stringify(messageObj));
+        window.dispatchEvent(new Event('storage'));
+        addLogEntry(`向子窗口发送消息: ${message}`);
+    }
     
     // 添加操作日志功能
     function addLogEntry(message) {
