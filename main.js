@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Menu, MenuItem, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, MenuItem, dialog, shell } = require('electron');
 const path = require('path');
 
 let mainWindow;
@@ -471,6 +471,44 @@ ipcMain.on('open-dialog', async (event, type) => {
             error: error.message 
         });
     }
+});
+
+// 监听 Shell 操作请求
+ipcMain.on('shell-open-external', async (event, url) => {
+  try {
+    await shell.openExternal(url);
+    event.sender.send('shell-result', { success: true, message: `已打开外部链接: ${url}` });
+  } catch (error) {
+    event.sender.send('shell-result', { success: false, message: `打开链接失败: ${error.message}` });
+  }
+});
+
+ipcMain.on('shell-show-item-in-folder', async (event, filePath) => {
+  try {
+    // 如果没有提供路径，使用当前目录的示例
+    const pathToShow = filePath || __dirname;
+    shell.showItemInFolder(pathToShow);
+    event.sender.send('shell-result', { success: true, message: `已在文件夹中显示: ${pathToShow}` });
+  } catch (error) {
+    event.sender.send('shell-result', { success: false, message: `显示项目失败: ${error.message}` });
+  }
+});
+
+ipcMain.on('shell-trash-item', async (event, filePath) => {
+  try {
+    // 创建一个临时文件用于演示
+    const tempDir = app.getPath('temp');
+    const demoFile = path.join(tempDir, 'electron-demo-file.txt');
+    
+    // 确保文件存在
+    const fs = require('fs');
+    fs.writeFileSync(demoFile, '这是一个演示文件，用于展示移动到回收站功能');
+    
+    shell.trashItem(demoFile);
+    event.sender.send('shell-result', { success: true, message: `已移动到回收站: ${demoFile}` });
+  } catch (error) {
+    event.sender.send('shell-result', { success: false, message: `移动到回收站失败: ${error.message}` });
+  }
 });
 
 // 监听 beforeunload 确认消息

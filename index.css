@@ -255,3 +255,106 @@ body {
 .confirm-btn.no:hover {
   background-color: #95a5a6;
 }
+
+/* Shell 和 Iframe 区域样式 */
+.shell-iframe-section {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 8px;
+    margin: 20px 0;
+    width: 80%;
+    max-width: 800px;
+}
+
+.shell-iframe-tabs {
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.15);
+    border-radius: 4px;
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+
+.shell-iframe-tab {
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    text-align: center;
+    flex: 1;
+}
+
+.shell-iframe-tab:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.shell-iframe-tab.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    font-weight: bold;
+}
+
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Shell 功能样式 */
+.shell-options {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+.shell-btn {
+    min-width: 140px;
+}
+
+.shell-result {
+    background-color: rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    border-radius: 8px;
+    margin-top: 15px;
+}
+
+.shell-result h4 {
+    margin-top: 0;
+    color: #ecf0f1;
+}
+
+#shellResult {
+    min-height: 40px;
+    font-family: 'Consolas', monospace;
+    font-size: 12px;
+}
+
+/* Iframe 功能样式 */
+.iframe-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+#iframeUrl {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #2c3e50;
+}
+
+.iframe-container {
+    height: 300px;
+    border-radius: 4px;
+    overflow: hidden;
+    background-color: white;
+}
+
+#webView {
+    width: 100%;
+    height: 100%;
+    border: none;
+}

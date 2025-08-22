@@ -156,6 +156,67 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+        // Shell 和 Iframe 选项卡切换
+    document.querySelectorAll('.shell-iframe-tab').forEach(tab => {
+        tab.addEventListener('click', () => {
+            // 移除所有选项卡的active类
+            document.querySelectorAll('.shell-iframe-tab').forEach(t => t.classList.remove('active'));
+            
+            // 为当前选项卡添加active类
+            tab.classList.add('active');
+            
+            // 隐藏所有内容区域
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            // 显示对应内容区域
+            const tabName = tab.getAttribute('data-tab');
+            document.getElementById(`${tabName}-content`).classList.add('active');
+        });
+    });
+
+    // Shell 功能按钮事件
+    document.querySelectorAll('.shell-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            const action = e.target.getAttribute('data-action');
+            
+            switch(action) {
+                case 'open-external':
+                    window.electronAPI.shellOpenExternal('https://www.electronjs.org');
+                    break;
+                case 'show-item':
+                    window.electronAPI.shellShowItemInFolder();
+                    break;
+                case 'trash-item':
+                    window.electronAPI.shellTrashItem();
+                    break;
+            }
+        });
+    });
+
+    // Iframe 加载按钮事件
+    document.getElementById('loadIframeBtn').addEventListener('click', () => {
+        const url = document.getElementById('iframeUrl').value.trim();
+        if (url) {
+            // 简单的URL验证
+            let validUrl = url;
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                validUrl = 'https://' + url;
+            }
+            
+            document.getElementById('webView').src = validUrl;
+            addLogEntry(`加载网页: ${validUrl}`);
+        }
+    });
+
+    // 监听 Shell 操作结果
+    window.electronAPI.onShellResult((event, result) => {
+        const shellResult = document.getElementById('shellResult');
+        shellResult.textContent = result.message;
+        shellResult.style.color = result.success ? '#2ecc71' : '#e74c3c';
+        
+        addLogEntry(`Shell操作: ${result.message}`);
+    });
+
     // 添加发送消息到子窗口的功能
     function sendMessageToChild(message) {
         const messageObj = {

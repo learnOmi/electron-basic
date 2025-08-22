@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>父窗口</title>
     <link rel="stylesheet" href="index.css">
 </head>
+
 <body>
     <!-- 自定义标题栏 -->
     <div class="titlebar">
@@ -16,7 +18,7 @@
         </div>
     </div>
 
-        <!-- 菜单选项卡 -->
+    <!-- 菜单选项卡 -->
     <div class="menu-tabs">
         <div class="menu-tab active" data-tab="home">
             <span class="tab-icon">🏠</span>
@@ -35,16 +37,16 @@
             <span class="tab-text">关于</span>
         </div>
     </div>
-    
+
     <!-- 内容区域 -->
     <div class="content">
         <h1>父窗口</h1>
         <p>这是一个无边框 Electron 窗口示例</p>
-        
+
         <button class="btn" id="openChildBtn">打开子窗口</button>
         <button class="btn" id="openDialogBtn">打开对话框</button>
 
-                <!-- 添加动态菜单项功能 -->
+        <!-- 添加动态菜单项功能 -->
         <div class="add-menu-section">
             <h2>添加自定义菜单项</h2>
             <div class="input-group">
@@ -53,7 +55,45 @@
             </div>
             <p class="hint">添加的菜单项将出现在"自定义"菜单中</p>
         </div>
-        
+
+        <!-- shell和iframe模块演示 -->
+        <div class="shell-iframe-section">
+            <h2 style="text-align: center; color: #ecf0f1; margin-bottom: 15px;">Shell 和 Iframe 功能演示</h2>
+
+            <div class="shell-iframe-tabs">
+                <div class="shell-iframe-tab active" data-tab="shell">Shell 功能</div>
+                <div class="shell-iframe-tab" data-tab="iframe">Iframe 功能</div>
+            </div>
+
+            <div class="shell-iframe-content">
+                <!-- Shell 功能区域 -->
+                <div class="tab-content active" id="shell-content">
+                    <div class="shell-options">
+                        <button class="btn shell-btn" data-action="open-external">打开外部链接</button>
+                        <button class="btn shell-btn" data-action="show-item">在文件夹中显示</button>
+                        <button class="btn shell-btn" data-action="trash-item">移动到回收站</button>
+                    </div>
+                    <div class="shell-result">
+                        <h4>Shell 操作结果：</h4>
+                        <div id="shellResult">等待操作...</div>
+                    </div>
+                </div>
+
+                <!-- Iframe 功能区域 -->
+                <div class="tab-content" id="iframe-content">
+                    <div class="iframe-controls">
+                        <input type="text" id="iframeUrl" placeholder="输入网址 (例如: https://www.example.com)"
+                            value="https://www.electronjs.org">
+                        <button class="btn" id="loadIframeBtn">加载网页</button>
+                    </div>
+                    <div class="iframe-container">
+                        <iframe id="webView" src="about:blank" frameborder="0"></iframe>
+                    </div>
+                    <p class="hint">提示：某些网站可能不允许在 iframe 中加载</p>
+                </div>
+            </div>
+        </div>
+
         <!-- 操作日志 -->
         <div class="action-log">
             <h3>操作日志</h3>
@@ -62,8 +102,9 @@
             </div>
         </div>
     </div>
-    
+
     <script src="index.js">
     </script>
 </body>
+
 </html>
