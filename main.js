@@ -22,13 +22,12 @@ function createWindow() {
 
     webPreferences: {
       // 默认开启，预加载脚本和 Electron API 会被隔离在独立的上下文中, 会隔离渲染进程的全局环境
-      contextIsolation: false, 
+      contextIsolation: true, 
       // 默认关闭nodejs集成，开启后渲染进程可直接访问所有 nodejs api
-      nodeIntegration: true,
+      nodeIntegration: false,
       // 开启remote模块(12之后已移除)，允许渲染进程直接使用主进程
       // enableRemoteModule: true,
-
-      // preload: path.join(__dirname, 'preload.js') // 安全地暴露API给渲染进程
+      preload: path.join(__dirname, 'preload.js') // 安全地暴露API给渲染进程
     }
   });
 
@@ -107,7 +106,8 @@ function createMenu() {
           label: '新建',
           accelerator: 'CmdOrCtrl+N',
           click: () => {
-            console.log('新建……');
+            console.log('新建文件');
+            mainWindow.webContents.send('menu-action', 'new-file');
           }
         },
         { type: 'separator' },
@@ -115,20 +115,116 @@ function createMenu() {
           label: '打开',
           accelerator: 'CmdOrCtrl+O',
           click: () => {
-            console.log('打开……');
+            console.log('打开文件');
+            mainWindow.webContents.send('menu-action', 'open-file');
           }
         },
+        { type: 'separator' },
+        {
+          label: '退出',
+          accelerator: isMac ? 'Cmd+Q' : 'Ctrl+Q',
+          click: () => {
+            app.quit();
+          }
+        }
       ]
     },
     {
       label: '编辑',
       submenu: [
-        { role: 'undo', label: '撤销' },
-        { role: 'redo', label: '重做' },
+        { 
+          role: 'undo', 
+          label: '撤销',
+          click: () => {
+            mainWindow.webContents.send('menu-action', 'edit-undo');
+          }
+        },
+        { 
+          role: 'redo', 
+          label: '重做',
+          click: () => {
+            mainWindow.webContents.send('menu-action', 'edit-redo');
+          }
+        },
         { type: 'separator' },
-        { role: 'cut', label: '剪切' }
+        { 
+          role: 'cut', 
+          label: '剪切',
+          click: () => {
+            mainWindow.webContents.send('menu-action', 'edit-cut');
+          }
+        },
+        { 
+          role: 'copy', 
+          label: '复制',
+          click: () => {
+            mainWindow.webContents.send('menu-action', 'edit-copy');
+          }
+        },
+        { 
+          role: 'paste', 
+          label: '粘贴',
+          click: () => {
+            mainWindow.webContents.send('menu-action', 'edit-paste');
+          }
+        }
       ]
     },
+    {
+      label: '视图',
+      submenu: [
+        {
+          label: '首页',
+          click: () => {
+            console.log('切换到首页');
+            mainWindow.webContents.send('menu-action', 'view-home');
+          }
+        },
+        {
+          label: '设置',
+          click: () => {
+            console.log('切换到设置');
+            mainWindow.webContents.send('menu-action', 'view-settings');
+          }
+        },
+        {
+          label: '帮助',
+          click: () => {
+            console.log('切换到帮助');
+            mainWindow.webContents.send('menu-action', 'view-help');
+          }
+        },
+        {
+          label: '关于',
+          click: () => {
+            console.log('切换到关于');
+            mainWindow.webContents.send('menu-action', 'view-about');
+          }
+        },
+        { type: 'separator' },
+        { 
+          role: 'reload', 
+          label: '重新加载',
+          click: () => {
+            mainWindow.webContents.send('menu-action', 'view-reload');
+          }
+        },
+        { 
+          role: 'forceReload', 
+          label: '强制重新加载',
+          click: () => {
+            mainWindow.webContents.send('menu-action', 'view-force-reload');
+          }
+        },
+        { 
+          role: 'toggleDevTools', 
+          label: '开发者工具',
+          click: () => {
+            mainWindow.webContents.send('menu-action', 'view-dev-tools');
+          }
+        }
+      ]
+    }
   ];
 
   const menu = Menu.buildFromTemplate(template);
@@ -163,6 +259,12 @@ ipcMain.on('window-control', (event, action) => {
         break;
     }
   }
+});
+
+// 监听自定义菜单操作
+ipcMain.on('custom-menu-action', (event, action) => {
+  console.log(`自定义菜单操作: ${action}`);
+  // 这里可以根据需要执行相应的操作
 });
 
 // 监听退出确认消息

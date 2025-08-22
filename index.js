@@ -1,30 +1,24 @@
-const { ipcRenderer } = require('electron');
-
 window.addEventListener('DOMContentLoaded', () => {
     // 监听 beforeunload 事件
     window.onbeforeunload = function (e) {
-        // 显示确认退出窗口
-        ipcRenderer.send('show-quit-confirmation');
-
-        // 返回任意值以显示确认对话框（某些浏览器会显示）
-        // 但在 Electron 中，我们使用自定义窗口，所以不需要这个
+        window.electronAPI.showQuitConfirmation();
         return false;
     };
 
     // 窗口控制按钮
     document.getElementById('minimize-btn').addEventListener('click', () => {
-        ipcRenderer.send('window-control', 'minimize');
+        window.electronAPI.windowControl('minimize');
     });
 
     document.getElementById('maximize-btn').addEventListener('click', () => {
-        ipcRenderer.send('window-control', 'maximize');
+        window.electronAPI.windowControl('maximize');
     });
 
     document.getElementById('close-btn').addEventListener('click', () => {
-        ipcRenderer.send('window-control', 'close');
+        window.electronAPI.windowControl('close');
     });
 
-        // 菜单选项卡点击事件
+    // 菜单选项卡点击事件
     const menuTabs = document.querySelectorAll('.menu-tab');
     menuTabs.forEach(tab => {
         tab.addEventListener('click', () => {
@@ -37,8 +31,8 @@ window.addEventListener('DOMContentLoaded', () => {
             // 获取选项卡标识
             const tabName = tab.getAttribute('data-tab');
             
-            // 在控制台输出日志
-            console.log(`点击了 ${tabName} 选项卡`);
+            // 发送自定义菜单操作
+            window.electronAPI.customMenuAction(`tab-${tabName}`);
             
             // 根据选项卡执行不同操作
             switch(tabName) {
@@ -57,5 +51,19 @@ window.addEventListener('DOMContentLoaded', () => {
             }
         });
     });
-
+    
+    // 监听来自主进程的菜单操作
+    window.electronAPI.onMenuAction((event, action) => {
+        console.log(`收到菜单操作: ${action}`);
+        
+        // 根据菜单操作更新UI状态
+        if (action.startsWith('view-')) {
+            const viewName = action.replace('view-', '');
+            const tab = document.querySelector(`.menu-tab[data-tab="${viewName}"]`);
+            if (tab) {
+                menuTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            }
+        }
+    });
 });

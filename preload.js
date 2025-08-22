@@ -1,8 +1,19 @@
-// 预加载脚本
-const { contextBridge } = require('electron');
+const { contextBridge, ipcRenderer } = require('electron');
 
-// 通过 contextBridge 安全地暴露 API 给渲染进程
-contextBridge.exposeInMainWorld('myAPI', {
-  // 这里可以定义一些你希望渲染进程可以调用的方法
-  doSomething: () => {}
+contextBridge.exposeInMainWorld('electronAPI', {
+  // 窗口控制
+  windowControl: (action) => ipcRenderer.send('window-control', action),
+  
+  // 菜单操作
+  menuAction: (action) => ipcRenderer.send('menu-action', action),
+  customMenuAction: (action) => ipcRenderer.send('custom-menu-action', action),
+  
+  // 退出确认
+  showQuitConfirmation: () => ipcRenderer.send('show-quit-confirmation'),
+  
+  // 监听菜单操作
+  onMenuAction: (callback) => ipcRenderer.on('menu-action', callback),
+  
+  // 移除监听器
+  removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel)
 });

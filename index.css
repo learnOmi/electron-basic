@@ -17,7 +17,7 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 0 10px;
-  -webkit-app-region: drag; /* 允许拖动 */
+  -webkit-app-region: drag;
   user-select: none;
 }
 
@@ -28,7 +28,7 @@ body {
 
 .titlebar-controls {
   display: flex;
-  -webkit-app-region: no-drag; /* 按钮区域不允许拖动 */
+  -webkit-app-region: no-drag;
 }
 
 .titlebar-button {
@@ -99,7 +99,7 @@ body {
 /* 内容区域 */
 .content {
   padding: 20px;
-  height: calc(100vh - 70px); /* 标题栏30px + 菜单选项卡40px */
+  height: calc(100vh - 70px);
   display: flex;
   flex-direction: column;
   align-items: center;
