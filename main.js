@@ -290,6 +290,55 @@ function addCustomMenuItem(menuItemName) {
   }
 }
 
+// 创建右键菜单
+function createContextMenu() {
+  const template = [
+    {
+      label: '复制',
+      role: 'copy',
+      click: () => {
+        console.log('右键菜单: 复制');
+        mainWindow.webContents.send('context-menu-action', 'copy');
+      }
+    },
+    {
+      label: '粘贴',
+      role: 'paste',
+      click: () => {
+        console.log('右键菜单: 粘贴');
+        mainWindow.webContents.send('context-menu-action', 'paste');
+      }
+    },
+    { type: 'separator' },
+    {
+      label: '重新加载',
+      click: () => {
+        console.log('右键菜单: 重新加载');
+        mainWindow.webContents.send('context-menu-action', 'reload');
+        mainWindow.reload();
+      }
+    },
+    {
+      label: '检查元素',
+      click: () => {
+        console.log('右键菜单: 检查元素');
+        mainWindow.webContents.send('context-menu-action', 'inspect');
+        mainWindow.webContents.inspectElement(mainWindow.getPosition()[0], mainWindow.getPosition()[1]);
+      }
+    },
+    { type: 'separator' },
+    {
+      label: '关于此应用',
+      click: () => {
+        console.log('右键菜单: 关于此应用');
+        mainWindow.webContents.send('context-menu-action', 'about');
+      }
+    }
+  ];
+
+  return Menu.buildFromTemplate(template);
+}
+
 app.whenReady().then(() => {
   createWindow();
   createMenu();
@@ -324,6 +373,17 @@ ipcMain.on('window-control', (event, action) => {
 ipcMain.on('custom-menu-action', (event, action) => {
   console.log(`自定义菜单操作: ${action}`);
   // 这里可以根据需要执行相应的操作
+});
+
+// 监听右键菜单显示请求
+ipcMain.on('show-context-menu', () => {
+  const contextMenu = createContextMenu();
+  contextMenu.popup({
+    window: mainWindow,
+    callback: () => {
+      console.log('右键菜单已关闭');
+    }
+  });
 });
 
 // 监听退出确认消息

@@ -11,6 +11,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   // 添加菜单项
   addMenuItem: (name) => ipcRenderer.send('add-menu-item', name),
   
+  // 右键菜单
+  showContextMenu: () => ipcRenderer.send('show-context-menu'),
+  
   // 退出确认
   showQuitConfirmation: () => ipcRenderer.send('show-quit-confirmation'),
   
@@ -22,6 +25,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   
   // 监听菜单项添加错误
   onMenuItemError: (callback) => ipcRenderer.on('menu-item-error', callback),
+  
+  // 监听右键菜单操作
+  onContextMenuAction: (callback) => ipcRenderer.on('context-menu-action', callback),
   
   // 移除监听器
   removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel)

@@ -63,6 +63,12 @@ window.addEventListener('DOMContentLoaded', () => {
             addLogEntry('请输入菜单项名称');
         }
     });
+
+    // 监听右键点击事件
+    document.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
+        window.electronAPI.showContextMenu();
+    });
     
     
     // 监听来自主进程的菜单操作
@@ -88,6 +94,12 @@ window.addEventListener('DOMContentLoaded', () => {
     // 监听菜单项添加错误
     window.electronAPI.onMenuItemError((event, errorMessage) => {
         addLogEntry(`错误: ${errorMessage}`);
+    });
+
+        // 监听右键菜单操作
+    window.electronAPI.onContextMenuAction((event, action) => {
+        console.log(`右键菜单操作: ${action}`);
+        addLogEntry(`右键菜单: ${action}`);
     });
     
     // 添加操作日志功能
