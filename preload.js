@@ -16,6 +16,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   
   // 退出确认
   showQuitConfirmation: () => ipcRenderer.send('show-quit-confirmation'),
+
+  // 打开对话框
+  openDialog: (type) => ipcRenderer.send('open-dialog', type),
   
   // 监听菜单操作
   onMenuAction: (callback) => ipcRenderer.on('menu-action', callback),
@@ -28,6 +31,9 @@ contextBridge.exposeInMainWorld('electronAPI', {
   
   // 监听右键菜单操作
   onContextMenuAction: (callback) => ipcRenderer.on('context-menu-action', callback),
+
+  // 监听对话框
+  onDialogResult: (callback) => ipcRenderer.on('dialog-result', callback),
   
   // 移除监听器
   removeAllListeners: (channel) => ipcRenderer.removeAllListeners(channel)

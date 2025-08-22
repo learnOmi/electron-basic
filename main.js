@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, Menu, MenuItem } = require('electron');
+const { app, BrowserWindow, ipcMain, Menu, MenuItem, dialog } = require('electron');
 const path = require('path');
 
 let mainWindow;
@@ -410,6 +410,67 @@ ipcMain.on('cancel-quit', () => {
 // 监听添加菜单项消息
 ipcMain.on('add-menu-item', (event, menuItemName) => {
   addCustomMenuItem(menuItemName);
+});
+
+// 在 ipcMain 监听部分添加对话框处理
+ipcMain.on('open-dialog', async (event, type) => {
+    if (!mainWindow) return;
+    
+    try {
+        let result;
+        
+        switch (type) {
+            case 'open':
+                result = await dialog.showOpenDialog(mainWindow, {
+                    properties: ['openFile', 'multiSelections'],
+                    filters: [
+                        { name: '所有文件', extensions: ['*'] },
+                        { name: '文本文件', extensions: ['txt', 'md'] },
+                        { name: '图片', extensions: ['jpg', 'png', 'gif'] }
+                    ],
+                    title: '选择文件'
+                });
+                break;
+                
+            case 'save':
+                result = await dialog.showSaveDialog(mainWindow, {
+                    filters: [
+                        { name: '文本文件', extensions: ['txt'] },
+                        { name: '所有文件', extensions: ['*'] }
+                    ],
+                    title: '保存文件'
+                });
+                break;
+                
+            case 'info':
+                await dialog.showMessageBox(mainWindow, {
+                    type: 'info',
+                    title: '信息',
+                    message: '这是一个信息对话框',
+                    detail: '这里是详细信息内容',
+                    buttons: ['确定', '取消']
+                });
+                result = { message: '用户查看了信息对话框' };
+                break;
+                
+            case 'error':
+                await dialog.showErrorBox('错误标题', '这是一个错误消息内容');
+                result = { message: '用户查看了错误对话框' };
+                break;
+                
+            default:
+                result = { canceled: true };
+        }
+        
+        // 发送对话框结果回渲染进程
+        event.sender.send('dialog-result', result);
+    } catch (error) {
+        console.error('对话框错误:', error);
+        event.sender.send('dialog-result', { 
+            canceled: true, 
+            error: error.message 
+        });
+    }
 });
 
 // 监听 beforeunload 确认消息

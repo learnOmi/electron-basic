@@ -69,6 +69,24 @@ window.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         window.electronAPI.showContextMenu();
     });
+
+    // 监听打开对话框按钮
+    document.getElementById('openDialogBtn').addEventListener('click', () => {
+        window.electronAPI.openDialog('open');
+    });
+
+    // 监听对话框结果
+    window.electronAPI.onDialogResult((event, result) => {
+        if (result && !result.canceled) {
+            if (result.filePaths) {
+                addLogEntry(`选择了文件: ${result.filePaths.join(', ')}`);
+            } else if (result.message) {
+                addLogEntry(`对话框消息: ${result.message}`);
+            }
+        } else {
+            addLogEntry('用户取消了对话框操作');
+        }
+    });
     
     
     // 监听来自主进程的菜单操作
